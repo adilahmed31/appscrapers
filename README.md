@@ -2,7 +2,7 @@
 A collection of scrapers for Android and iOS apps on different stores
 
 # Scrapper scripts 
-## For scrping search engines
+## For scraping search engines
 ```bash
 $ python scraper.search_engines <language> <country> <query>
 # Or, default language=US, country=EN
@@ -37,7 +37,7 @@ $ python scraper.search_engines bn bn "আমাকে কি track করা �
 -->
 
 
-## For scraping Play Store and iTune App store
+## For scraping Play Store and iTunes App store
 
 The main calling script is [`pyscrapper.py`](pyscrapper.py).
 Checkout `cron.sh` for how to run the scripts. You have to run from 
