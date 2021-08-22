@@ -1,7 +1,7 @@
 # Scrapper scripts 
-For scraping Play Store and iTune App store
+For scraping Play Store and iTunes App store
 
-The main calling script is [`pyscrapper.py`](pyscrapper.py).
+The main calling script is [`pyscraper.py`](pyscraper.py).
 Checkout `cron.sh` for how to run the scripts. You have to run from 
 the top level directory of the project. 
 
@@ -34,8 +34,8 @@ use it to communicate from `python`.
 
 
 ```bash
-$ python -m scraper.pyscrapper -h
-usage: pyscrapper.py [-h]
+$ python -m scraper.pyscraper -h
+usage: pyscraper.py [-h]
                      [--appstore {android,ios,google-related,google-comp,bing}]
                      [--reviews] [--apps APPS [APPS ...]] [--appdetails]
                      [--crawl] [--test] [--qs] [--fresh] [--prod]
@@ -66,7 +66,7 @@ optional arguments:
 
 ### To download details of apps
 ```bash
-$ python -m scraper.pyscrapper --appdetails --apps com.dxco.pandavszombies --appstore android [--fresh]
+$ python -m scraper.pyscraper --appdetails --apps com.dxco.pandavszombies --appstore android [--fresh]
 ```
 
 `--apps` takes a list of apps as argument, so if you have only a few apps to download this is the easiest. If there are
@@ -76,7 +76,7 @@ many apps to download, put those in a file, say called `app-lists.txt` and run t
 The downloaded app details goes to `data/apps_test.db`. 
 
 ```bash
-$ python -m scraper.pyscrapper --appdetails --apps @app-lists.txt --appstore android [--fresh]
+$ python -m scraper.pyscraper --appdetails --apps @app-lists.txt --appstore android [--fresh]
 ```
 
 Adding a `--reviews` will download the reviews of those apps too. Number of reviews to download is controlled by `scraper/config.py` file 
@@ -92,16 +92,16 @@ Note that node.js actually does the scraping. Python is used to control scraping
 ### Crawling ###
 
 ```bash
-python -m scraper.pyscrapper --crawl --prod --appstore android &>> /tmp/pyscrapper.log && fg
+python -m scraper.pyscraper --crawl --prod --appstore android &>> /tmp/pyscrapper.log && fg
 ```
 
 This is the actual command:
 ```bash
-python -m scraper.pyscrapper --crawl --prod --appstore android 
+python -m scraper.pyscraper --crawl --prod --appstore android 
 ```
 
 After the `&>>` (redirect):
-	`&>> /tmp/pyscrapper.log && fg`
+	`&>> /tmp/pyscraper.log && fg`
 redirects both the standard output and the standard error, stdout and stderr, into the file `/tmp/pyscrapper.log`. 
 
 `&& fg` brings the command into the foreground, because it would otherwise run in the background. 
@@ -109,7 +109,7 @@ Now, both will be run in the same shell together.
 The `fg` is not necessary if you're running only one command.  
 Thus, if you're only running the android script, you can just use:
 ```bash
-python -m scraper.pyscrapper --crawl --prod --appstore android &>> /tmp/pyscrapper.log &
+python -m scraper.pyscraper --crawl --prod --appstore android &>> /tmp/pyscraper.log &
 ```
 ### Set Language and Country ###
 
@@ -117,7 +117,7 @@ If you want to set the `LANG` and `COUNTRY`, use `APP_LANG` and `APP_COUNTRY` ba
 variables. The following command will execute for Italian in Italy. 
 
 ```bash
-$ APP_LANG=it APP_COUNTRY=it python -m scraper.pyscrapper --crawl --prod --appstore android &>> /tmp/pyscrapper.log &
+$ APP_LANG=it APP_COUNTRY=it python -m scraper.pyscraper --crawl --prod --appstore android &>> /tmp/pyscraper.log &
 ```
 
 
@@ -134,7 +134,7 @@ For training, just care about appid and relevance level from data. appid is nece
 
 
 ### TODO
-[ ] Right now the project use a mix of Node and Python code. Update the whole proejct to use only Python code and libraries. 
+[ ] Right now the project use a mix of Node and Python code. Update the whole project to use only Python code and libraries. 
 [ ] Add random and adaptive sleeping to avoid blocking by Google.
 [ ] 
 

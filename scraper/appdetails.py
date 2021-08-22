@@ -110,11 +110,14 @@ def download_app_details(appid, store, force=False):
     # ret['similar'] = [ x for x in get_closure_of_apps([appid],
     #     store=store, limit=config.APPS_PER_QUERY) ]
     ret['similar'] = get_similar_apps(appid, store=store)
-
+    #Resolving bug where time in sting format could not be converted to date in the next if statement
+    current_time = datetime.now().timestamp()
+    updated_time = datetime.strptime(ret['updated'],'%Y-%m-%dT%H:%M:%SZ')
+    updated_time = float(datetime.timestamp(updated_time))
     # If the app is in the playstore updated long time ago (more than a month),
     # then we already have the most updated version.
     if already_exists and \
-       (datetime.now().timestamp() - float(ret['updated']) > 30 * 86400):
+       ((current_time - updated_time) > 30 * 86400):
         return None
     if store == 'android':
         # ret['permissions'] = [x for x in permissions({'appId': appid,
