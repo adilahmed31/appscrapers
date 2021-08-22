@@ -101,7 +101,7 @@ optional arguments:
 
 ### To download details of apps
 ```bash
-$ python -m scraper.pyscrapper --appdetails --apps com.dxco.pandavszombies --appstore android [--fresh]
+$ python -m scraper.pyscraper --appdetails --apps com.dxco.pandavszombies --appstore android [--fresh]
 ```
 
 `--apps` takes a list of apps as argument, so if you have only a few apps to download this is the easiest. If there are
