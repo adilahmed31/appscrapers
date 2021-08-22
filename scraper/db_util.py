@@ -6,6 +6,7 @@ from . import config
 # import sys
 import os
 import itertools
+import sqlite3
 db = None
 logger = config.setup_logger()
 
@@ -16,9 +17,17 @@ def _id_column_type():
     else:
         return 'String'
 
+# #Initialize DB on first run of the program
+# def create_db():
+#     if not os.path.isdir(config.DATA_DIR):
+#         os.makedirs(config.DATA_DIR)
+#         print("Folder created: ", config.DATA_DIR)
+#     if not os.path.exists(config.TEST_DB_FILE):
+
 
 def db_connect(test=True):
     global db
+    # create_db()
     if not db:
         db = dataset.connect(
             'sqlite:///{}'.format(
