@@ -6,6 +6,7 @@ import scraper.config as config
 import json
 import sys
 from datetime import datetime
+import threading
 
 logger = config.setup_logger()
 SERIALIZED_KEYS = [
@@ -74,7 +75,6 @@ def download_app_details(appid, store, force=False):
     already_exists = exists(table, 'appId', appid, time_check=force)
 
     appfunc = get_store_func('app', store)
-
     if store == 'ios' and (appid.startswith('id') or appid.isdigit()):
         already_exists = exists(table, 'iosid', appid, time_check=force)
         if already_exists:
@@ -94,26 +94,32 @@ def download_app_details(appid, store, force=False):
 
     if not ret:
         if already_exists:
-            q = "update {table} set discontinued={time!r} where "\
-                "appId={appid!r} and discontinued is null".format(
-                    table=table.table.name,
-                    time=config.now(),
-                    appid=appid
-                )
-            db.query(q)
+            # q = "update {table} set discontinued={time!r} where "\
+            #     "appId={appid!r} and discontinued is null".format(
+            #         table=table.table.name,
+            #         time=config.now(),
+            #         appid=appid
+            #     )
+            #db.query(q)
+            data = dict(appId=appid,discontinued=config.now())
+            table.update(data,['appId'])
         logger.info("No app with appId={}".format(appid))
         return None
     # get permissions and similar apps Similar apps was supposed to be
-    # closure like terms, but, similar apps diverage very fast, and the set
+    # closure like terms, but, similar apps diverge very fast, and
     # the closure set grows too much. So right now it is capped to 20
     # similar apps
     # ret['similar'] = [ x for x in get_closure_of_apps([appid],
     #     store=store, limit=config.APPS_PER_QUERY) ]
     ret['similar'] = get_similar_apps(appid, store=store)
-    #Resolving bug where time in sting format could not be converted to date in the next if statement
     current_time = datetime.now().timestamp()
-    updated_time = datetime.strptime(ret['updated'],'%Y-%m-%dT%H:%M:%SZ')
-    updated_time = float(datetime.timestamp(updated_time))
+    #Bugfix: if store is ios, datetime is returned as a string (e.g:2021-08-22T05:05:30Z) 
+    # but android returns a timestamp (e.g: 1628091891000.0). Modified code to handle both conditions.
+    if store == 'ios':
+        updated_time = datetime.strptime(ret['updated'],'%Y-%m-%dT%H:%M:%SZ')
+        updated_time = float(datetime.timestamp(updated_time))
+    else:
+        updated_time = ret['updated']
     # If the app is in the playstore updated long time ago (more than a month),
     # then we already have the most updated version.
     if already_exists and \
@@ -143,13 +149,16 @@ def download_app_details(appid, store, force=False):
     upsert(table, ret, ['appId', 'description', 'title',
                         'permissions', 'updated'])
 
-    q = "update {table} set lastseen={time!r} where "\
-        "appId={appid!r}".format(
-            table=table.table.name,
-            time=config.now(),
-            appid=ret['appId']
-        )
-    db.query(q)
+    # q = "update {table} set lastseen={time!r} where "\
+    #     "appId={appid!r}".format(
+    #         table=table.table.name,
+    #         time=config.now(),
+    #         appid=ret['appId']
+    #     )
+    #Refactored code to avoid errors with return values
+    data = dict(appId=ret['appId'],lastseen=config.now())
+    table.update(data,['appId'])
+    #db.query(q)
 
 
 def download_reviews(appid, store, limit=100):
@@ -202,9 +211,15 @@ def download_reviews(appid, store, limit=100):
         ret = reviews_func({'appId': appid, 'page': page, 'lang':config.LANG,
                             'throttle': config.THROTTLE_DEFAULT-3}) 
         if not ret: break
+        #Bugfix: Handling a difference in format of the JSON objects returned from Play Store and App Store scrapers
+        if store == 'android':
+            ret = ret['data']
+            #Bugfix: Hack to solve an issue
+            # where the criterias parameter returns a blank list [] and causes an error when inserted into the DB
+            for r in ret:
+                r["criterias"] = None
         ret = [add_appid(r) for r in ret if r['id'] not in ids_already_there]
         assert len(ret) == len(set(r['id'] for r in ret)), ret
-
         rev_count += len(ret)
         page += 1
         try:
@@ -217,5 +232,10 @@ def download_reviews(appid, store, limit=100):
             exit(-1)
         ids_already_there |= set(r['id'] for r in ret)
         comments.extend(ret)
+        #The program does not terminate when reviews are fetched from the android app store. 
+        # This is a temporary hack till I can figure out what process is causing the issue.
+        #TODO: Debug and fix script not terminating issue. 
+        if store == 'android':
+            sys.exit()
     db.commit()
     return comments

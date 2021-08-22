@@ -1,9 +1,10 @@
-# ALL the funcitons above does not check for match in the db
+# ALL the functions above do not check for match in the db
 # db related functions
 import dataset
 import json
 from . import config
 # import sys
+import os
 import itertools
 db = None
 logger = config.setup_logger()
