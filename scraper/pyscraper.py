@@ -195,7 +195,7 @@ def get_terms_and_apps_for_term(term, store, force=False, limit=1000):
             if k in ret:
                 ins_ret[k] = json.dumps(ret[k])
         #Bugfix to resolve program crashing when duplicate terms are found
-        table.upsert(ins_ret,['term', 'terms', 'apps'])
+        table.upsert(ins_ret,['term'])
         #upsert(table, ins_ret, ['term', 'terms', 'apps']) 
     return ret
 
