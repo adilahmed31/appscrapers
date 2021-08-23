@@ -140,15 +140,12 @@ def get_appids_for_query(query, store):
     results = search({
             'term': query,
             'num': config.APPS_PER_QUERY,
-            'throttle': config.THROTTLE_DEFAULT,
+            #'throttle': config.THROTTLE_DEFAULT,
             'lang': config.LANG,
             'country': config.COUNTRY,
-            'fullDetail': False,
-            'price': 'all'
         })
     print(results)
-    ret = set(a['appId'] for a in results)
-    print(ret)
+    ret = {a['appId'] for a in results}
     return ret
 
 
@@ -423,7 +420,7 @@ def arguments():
     return parser
 
 
-if __name__ == "__main__":
+def main
     parser = arguments()
     args = parser.parse_args()
     print(args)
