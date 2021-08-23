@@ -12,7 +12,8 @@ const process = require("process");
 const zerorpc = require("zerorpc");
 const gplay = require('google-play-scraper')
 const appstore = require('app-store-scraper')
-const fs = require('fs')
+const fs = require('fs');
+const { TIMEOUT, NONAME } = require("dns");
 
 var LANG = 'it'
 var COUNTRY = 'it'

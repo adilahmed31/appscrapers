@@ -1,5 +1,5 @@
 """
-File to connect to the js server server.js that scrapes both Play Store and iTune App Store.
+File to connect to the js server server.js that scrapes both Play Store and iTunes App Store.
 """
 import subprocess
 import zerorpc

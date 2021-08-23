@@ -1,4 +1,6 @@
 var gplay = require('google-play-scraper');
 
-gplay.app({appId: 'com.spotify.tv.android'})
-  .then(console.log, console.log);
+gplay.search({
+    term: "find my phone",
+    num: 2
+  }).then(console.log, console.log);

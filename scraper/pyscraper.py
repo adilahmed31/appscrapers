@@ -137,6 +137,7 @@ def get_closure_of_apps(appids, store, limit=100):
 def get_appids_for_query(query, store):
     """For a query, return top 10 apps returned by the store"""
     search = get_store_func('search', store)
+    print(search)
     ret = set(
         a['appId']
         for a in search({
@@ -149,6 +150,7 @@ def get_appids_for_query(query, store):
             'price': 'all'
         })
     )
+    print(ret)
     return ret
 
 
