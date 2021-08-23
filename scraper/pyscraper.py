@@ -194,7 +194,9 @@ def get_terms_and_apps_for_term(term, store, force=False, limit=1000):
         for k in serialize_keys:
             if k in ret:
                 ins_ret[k] = json.dumps(ret[k])
-        upsert(table, ins_ret, ['term', 'terms', 'apps']) 
+        #Bugfix to resolve program crashing when duplicate terms are found
+        table.upsert(ins_ret,['term', 'terms', 'apps'])
+        #upsert(table, ins_ret, ['term', 'terms', 'apps']) 
     return ret
 
 
