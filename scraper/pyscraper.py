@@ -420,7 +420,7 @@ def arguments():
     return parser
 
 
-def main
+if __name__=='__main__':
     parser = arguments()
     args = parser.parse_args()
     print(args)
